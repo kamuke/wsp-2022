@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "name": "week1-node",
+  "version": "1.0.0",
+  "description": "my first package",
+  "main": "script.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "test",
+    "start": "nodemon script.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
