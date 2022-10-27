@@ -2,15 +2,15 @@
   "dependencies": {
     "lodash": "^4.17.21"
   },
-  "name": "week1-node",
+  "name": "week1-node-b",
   "version": "1.0.0",
-  "description": "my first package",
   "main": "script.js",
   "devDependencies": {},
   "scripts": {
-    "test": "test",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon script.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Kerttu",
+  "license": "ISC",
+  "description": ""
 }
