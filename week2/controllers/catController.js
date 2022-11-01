@@ -11,7 +11,7 @@ const cat_list_get = (req, res) => {
 
 const cat_get = (req, res) => {
     const cat = getCat(req.params.id);
-    console.log('kissa', cat);
+    // console.log('kissa', cat);
     res.json(cat);
 };
 
