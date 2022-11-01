@@ -19,15 +19,17 @@ const cats = [
 ];
 
 const getCat = (catId) => {
-  return cats.filter((cat) => {
+  return cats.find((cat) => {
     if (catId === cat.id) {
       return cat;
     }
-  }).pop();
+  });
 
   // Shorter version
-  // return cats.filter(cat => catId === cat.id).pop();
+  // return cats.find(cat => catId === cat.id);
 };
+
+// const getCat = catId => cats.find(cat => catId === cat.id);
 
 module.exports = {
   cats,
