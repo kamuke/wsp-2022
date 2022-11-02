@@ -300,3 +300,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,webstorm,node,windows
+
+# ignore content of uploads folder
+uploads/
+# except one (empty) file to have the folder in version control
+!uploads/.gitkeep
