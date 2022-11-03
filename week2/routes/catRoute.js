@@ -3,8 +3,6 @@ const express = require('express');
 const multer  = require('multer')
 const upload = multer({ dest: './uploads/' })
 const {cat_list_get, cat_get, cat_post, cat_update, cat_delete} = require('../controllers/catController');
-// const catController = require('../controllers/catController');
-// const cat_list_get = catController.cat_list_get;
 const router = express.Router();
 
 router.get('/', cat_list_get);

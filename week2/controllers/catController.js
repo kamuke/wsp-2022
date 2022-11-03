@@ -39,7 +39,7 @@ const cat_post = async (req, res) => {
 };
 
 const cat_update = async (req, res) => {
-  console.log('cat_update', req.body);
+  //console.log('cat_update', req.body);
   const data = [
     req.body.name,
     req.body.birthdate,
@@ -60,7 +60,7 @@ const cat_update = async (req, res) => {
 };
 
 const cat_delete = async (req, res) => {
-  console.log('cat_delete', req.params.id);
+  //console.log('cat_delete', req.params.id);
   const cat = await deleteCat(req.params.id);
 
   if (cat.affectedRows > 0) {
