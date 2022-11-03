@@ -1,6 +1,6 @@
 // catController
 'use strict';
-const {getAllCats, getCat} = require('../models/catModel');
+const {getAllCats, getCat, addCat} = require('../models/catModel');
 
 const cat_list_get = async (req, res) => {
   res.json(await getAllCats());
@@ -16,8 +16,18 @@ const cat_get = async (req, res) => {
   }
 };
 
-const cat_post = (req, res) => {
+const cat_post = async (req, res) => {
   // console.log('cat_post', req.body, 'cat_post', req.file);
+  const data = [
+    req.body.name,
+    req.body.birthdate,
+    req.body.weight,
+    req.body.owner,
+    req.file.filename,
+  ];
+
+  const result = await addCat(data);
+  console.log('addCat result', result);
   res.send('Cat post done.');
 };
 
