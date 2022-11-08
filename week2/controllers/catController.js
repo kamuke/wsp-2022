@@ -38,8 +38,8 @@ const cat_post = async (req, res) => {
   }
 };
 
-const cat_update = async (req, res) => {
-  //console.log('cat_update', req.body);
+const cat_put = async (req, res) => {
+  //console.log('cat_put', req.body);
   const data = [
     req.body.name,
     req.body.birthdate,
@@ -76,6 +76,6 @@ module.exports = {
   cat_list_get,
   cat_get,
   cat_post,
-  cat_update,
+  cat_put,
   cat_delete,
 };
