@@ -1,20 +1,22 @@
 // ./models/catModel.js
 'use strict';
 const pool = require('../database/db');
+const {httpError} = require('../utils/errors');
 const promisePool = pool.promise();
 
-const getAllCats = async () => {
+const getAllCats = async (next) => {
   try {
     const [rows] = await promisePool.execute(`SELECT cat_id, wsp_cat.name, weight, owner, filename, birthdate, wsp_user.name AS ownername
                                               FROM wsp_cat INNER JOIN wsp_user 
                                               ON wsp_cat.owner = wsp_user.user_id`);
     return rows;
   } catch (e) {
-    console.error('error', e.message);
+    console.error('getAllCats', e.message);
+    next(httpError('Database error', 500));
   }
 };
 
-const getCat = async (catId) => {
+const getCat = async (catId, next) => {
   try {
     const [rows] = await promisePool.execute(`SELECT cat_id, wsp_cat.name, weight, owner, filename, birthdate, wsp_user.name AS ownername
                                               FROM wsp_cat INNER JOIN wsp_user 
@@ -22,7 +24,8 @@ const getCat = async (catId) => {
                                               WHERE cat_id = ?;`, [catId]);
     return rows;
   } catch (e) {
-    console.error('error', e.message);
+    console.error('getCat', e.message);
+    next(httpError('Database error', 500));
   }
 };
 

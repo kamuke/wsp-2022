@@ -2,12 +2,12 @@
 'use strict';
 const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/catModel');
 
-const cat_list_get = async (req, res) => {
-  res.json(await getAllCats());
+const cat_list_get = async (req, res, next) => {
+  res.json(await getAllCats(next));
 };
 
-const cat_get = async (req, res) => {
-  const cat = await getCat(req.params.id);
+const cat_get = async (req, res, next) => {
+  const cat = await getCat(req.params.id, next);
 
   if (cat.length > 0) {
     res.json(cat.pop());
