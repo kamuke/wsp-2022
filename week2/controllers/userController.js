@@ -1,86 +1,98 @@
 // userController
 'use strict';
+const {validationResult} = require('express-validator');
 const {getUser, getAllUsers, addUser} = require('../models/userModel');
 const {httpError} = require('../utils/errors');
 
 const user_list_get = async (req, res, next) => {
-    try {
-        const users = await getAllUsers(next);
-        if (users.length < 1) {
-            next(httpError('No users found', 404));
-            return;
-        }
-        res.json(users);
-    } catch (e) {
-        console.error('user_list_get', e.message);
-        next(httpError('Internal server error', 500));
-    }
+  try {
+      const users = await getAllUsers(next);
+      if (users.length < 1) {
+          next(httpError('No users found', 404));
+          return;
+      }
+      res.json(users);
+  } catch (e) {
+      console.error('user_list_get', e.message);
+      next(httpError('Internal server error', 500));
+  }
 };
 
 const user_get = async (req, res, next) => {
-    try {
-        const user = await getUser(req.params.id, next);
-        if (user.length < 1) {
-            next(httpError('No user found', 404));
-            return;
-        }
-        res.json(user.pop());
-    } catch (e) {
-        console.error('user_get', e.message);
-        next(httpError('Internal server error', 500));
-    }
+  try {
+      const user = await getUser(req.params.id, next);
+      if (user.length < 1) {
+          next(httpError('No user found', 404));
+          return;
+      }
+      res.json(user.pop());
+  } catch (e) {
+      console.error('user_get', e.message);
+      next(httpError('Internal server error', 500));
+  }
 };
 
 const user_post = async (req, res, next) => {
-    try {
-        // console.log('user_post', req.body);
-        const data = [
-            req.body.name,
-            req.body.email,
-            req.body.passwd,
-        ];
+  try {
+      // Extract the validation errors from a request.
+      const errors = validationResult(req);
 
-        const result = await addUser(data, next);
-
-        if (result.affectedRows < 1) {
-            next(httpError('Invalid data', 400));
-            return;
-        }
-
-        res.json({
-            message: 'User added',
-            user_id: result.insertId,
-        });
-    } catch (e) {
-        console.error('user_post', e.message);
-        next(httpError('Internal server error', 500));
-    }
-};
-
-const user_put = async (req, res, next) => {
-    try {
-      const data = [
-        req.body.name,
-        req.body.email,
-        req.body.passwd,
-        req.body.id,
-      ];
-  
-      const result = await updateUser(data, next);
-
-      if (result.affectedRows < 1) {
+      if (!errors.isEmpty()) {
+        // There are errors.
+        // Error messages can be returned in an array using `errors.array()`.
+        console.error('user_post validation', errors.array());
         next(httpError('Invalid data', 400));
         return;
       }
-  
+
+      // console.log('user_post', req.body);
+      const data = [
+          req.body.name,
+          req.body.email,
+          req.body.passwd,
+      ];
+
+      const result = await addUser(data, next);
+
+      if (result.affectedRows < 1) {
+          next(httpError('Invalid data', 400));
+          return;
+      }
+
       res.json({
-        message: 'User modified',
-        user_id: result.insertId,
+          message: 'User added',
+          user_id: result.insertId,
       });
-    } catch (e) {
-      console.error('user_put', e.message);
+  } catch (e) {
+      console.error('user_post', e.message);
       next(httpError('Internal server error', 500));
+  }
+};
+
+const user_put = async (req, res, next) => {
+  try {
+    const data = [
+      req.body.name,
+      req.body.email,
+      req.body.passwd,
+      req.body.id,
+    ];
+
+    const result = await updateUser(data, next);
+
+    if (result.affectedRows < 1) {
+      next(httpError('Invalid data', 400));
+      return;
     }
+
+    res.json({
+      message: 'User modified',
+      user_id: result.insertId,
+    });
+  } catch (e) {
+    console.error('user_put', e.message);
+    next(httpError('Internal server error', 500));
+  }
   };
   
   const user_delete = async (req, res, next) => {
