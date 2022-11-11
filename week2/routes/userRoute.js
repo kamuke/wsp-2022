@@ -1,14 +1,15 @@
 'use strict';
 const express = require('express');
-const {user_list_get, user_get, user_post} = require('../controllers/userController');
+const {user_list_get, user_get, user_post, user_put, user_delete} = require('../controllers/userController');
 const router = express.Router();
 
 router.route('/').
     get(user_list_get).
     post(user_post).
-    put((req, res) => {res.send('With this endpoint you can edit users.')}).
-    delete((req, res) => {res.send('With this endpoint you can delete users.')});
+    put(user_put);
 
-router.route('/:id').get(user_get);
+router.route('/:id').
+    get(user_get).
+    delete(user_delete);
 
 module.exports = router;
