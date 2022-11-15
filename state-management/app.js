@@ -49,8 +49,9 @@ app.post('/login',
     });
 
 app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
+  req.logout(() => {
+    res.redirect('/');
+  });
 });
 
 app.get('/setCookie/:clr', (req, res) => {
