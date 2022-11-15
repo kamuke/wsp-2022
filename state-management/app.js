@@ -4,39 +4,21 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const app = express();
 const port = 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const username = 'foo';
 const password = 'bar';
+
+app.use(cookieParser());
+app.use(session({ secret: 'cmnva.krugh', cookie: { maxAge: 60000 } }));
 
 app.set('views', './views');
 app.set('view engine', 'pug');
 
-app.use(cookieParser());
-app.use(session({
-  secret: 'Jabadabaduu!',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {maxAge: 60*60*24}
-}));
-app.use(express.urlencoded({extended: false}));
-app.use(express.json());
-
 app.get('/', (req, res) => {
   res.render('home');
-});
-
-app.get('/setCookie/:clr', (req, res) => {
-  console.log(req.params.clr);
-  res.cookie('color', req.params.clr, {httpOnly: true}).send('Cookie set');
-});
-
-app.get('/getCookie', (req, res) => {
-  console.log('Cookies: ', req.cookies);
-  res.send('Cookie read');
-});
-
-app.get('/deleteCookie', (req, res) => {
-  res.clearCookie('color');
-  res.send('Cookie deleted');
 });
 
 app.get('/form', (req, res) => {
@@ -44,24 +26,41 @@ app.get('/form', (req, res) => {
 });
 
 app.get('/secret', (req, res) => {
-  if (!req.session.logged) {
+  if (req.session.logged) {
+    res.render('secret');
+  } else {
     res.redirect('/form');
-    return;
   }
-  res.render('secret');
 });
 
 app.post('/login', (req, res) => {
-  const uname = req.body.username;
-  const passwd = req.body.password;
-
-  if (uname !== username || passwd !== password) {
+  console.log(req.body);
+  if (req.body.password === password && req.body.username === username) {
+    req.session.logged = true;
+    res.redirect('/secret');
+  } else {
     req.session.logged = false;
     res.redirect('/form');
-    return;
   }
-  req.session.logged = true;
-  res.redirect('/secret');
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+});
+
+app.get('/setCookie/:clr', (req, res) => {
+  res.cookie('color', req.params.clr).send('eväste asetettu');
+});
+
+app.get('/getCookie', (req, res) => {
+  console.log(req.cookies);
+  res.send('color evästeessä lukee ' + req.cookies.color);
+});
+
+app.get('/deleteCookie', (req, res) => {
+  res.clearCookie('color');
+  res.send('eväste poistettu');
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
