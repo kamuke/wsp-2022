@@ -12,10 +12,12 @@ router.route('/').
         user_post).
     put(user_put);
 
+
+// HUOM! Järjestyksellä väliä
+router.get('/token', check_token);
+
 router.route('/:id').
     get(user_get).
     delete(user_delete);
-
-router.get('/token', check_token);
 
 module.exports = router;
