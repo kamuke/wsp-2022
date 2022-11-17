@@ -95,23 +95,31 @@ const user_put = async (req, res, next) => {
   }
   };
   
-  const user_delete = async (req, res, next) => {
-    try {
-      const result = await deleteUser(req.params.id, next);
+const user_delete = async (req, res, next) => {
+  try {
+    const result = await deleteUser(req.params.id, next);
 
-      if (result.affectedRows < 1) {
-        next(httpError('No user deleted', 404));
-        return;
-      }
-
-      res.json({
-        message: 'User deleted',
-      });
-    } catch (e) {
-      console.error('user_delete', e.message);
-      next(httpError('Internal server error', 500));
+    if (result.affectedRows < 1) {
+      next(httpError('No user deleted', 404));
+      return;
     }
-  };
+
+    res.json({
+      message: 'User deleted',
+    });
+  } catch (e) {
+    console.error('user_delete', e.message);
+    next(httpError('Internal server error', 500));
+  }
+};
+
+const check_token = (req, res, next) => {
+  if (!req.user) {
+    next(httpError('Token not valid', 403));
+  } else {
+    res.json({ user: req.user });
+  }
+ };
 
 module.exports = {
     user_list_get,
@@ -119,4 +127,5 @@ module.exports = {
     user_post,
     user_put,
     user_delete,
+    check_token,
 };
