@@ -3,6 +3,7 @@
 const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/catModel');
 const {httpError} = require('../utils/errors');
 const {validationResult} = require('express-validator');
+const sharp = require('sharp');
 
 const cat_list_get = async (req, res, next) => {
   try {
@@ -46,6 +47,14 @@ const cat_post = async (req, res, next) => {
     }
 
     // console.log('cat_post', req.body, 'cat_post', req.file);
+
+    // TODO: create thumbnail
+
+    const thumbnail = await sharp(req.file.path).
+      resize(160, 160).
+      png().
+      toFile('./thumbnails/'+req.file.filename);
+
     const data = [
       req.body.name,
       req.body.birthdate,
@@ -61,10 +70,12 @@ const cat_post = async (req, res, next) => {
       return;
     }
 
-    res.json({
-      message: 'Cat added',
-      cat_id: result.insertId,
-    });
+    if(thumbnail) {
+      res.json({
+        message: 'Cat added',
+        cat_id: result.insertId,
+      });
+    }
   } catch (e) {
     console.error('cat_post', e.message);
     next(httpError('Internal server error', 500));

@@ -3,6 +3,7 @@ const express = require('express');
 const {body} = require('express-validator');
 const multer = require('multer');
 const {cat_list_get, cat_get, cat_post, cat_put, cat_delete} = require('../controllers/catController');
+const { httpError } = require('../utils/errors');
 const router = express.Router();
 
 const fileFilter = (req, file, cb) => {
@@ -11,7 +12,7 @@ const fileFilter = (req, file, cb) => {
         file.mimetype === 'image/gif') {
         cb(null, true);
     } else {
-        cb(null, false);
+        cb(httpError('File is not image', 400));
     }
 };
 
