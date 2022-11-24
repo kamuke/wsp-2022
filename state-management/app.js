@@ -12,7 +12,7 @@ const loggedIn = (req, res, next) => {
   } else {
     res.redirect('/form');
   }
-}
+};
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -54,6 +54,8 @@ app.post('/login', (req, res) => {
     req.session.logged = false;
     res.redirect('/form');
   }
+});
+
 app.get('/secret', loggedIn, (req, res) => {
   res.render('secret');
 });
