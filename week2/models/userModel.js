@@ -1,6 +1,6 @@
 'use strict';
 const pool = require('../database/db');
-const { httpError } = require('../utils/errors');
+const {httpError} = require('../utils/errors');
 const promisePool = pool.promise();
 
 const getAllUsers = async (next) => {
@@ -22,7 +22,8 @@ const getUser = async (userID, next) => {
     return rows;
   } catch (e) {
     console.error('getUser', e.message);
-    next(httpError('Database error', 500));
+    // next virheenhallinta ei taida toimia pass.js:n kanssa yhteen
+    // next(httpError('Database error', 500));
   }
 };
 
@@ -35,10 +36,22 @@ const addUser = async (data, next) => {
     console.error('addUser', e.message);
     next(httpError('Database error', 500));
   }
-}
+};
+
+const getUserLogin = async (data, next) => {
+  try {
+    // console.log(data);
+    const [rows] = await promisePool.execute('SELECT * FROM wsp_user WHERE email = ?;', data);
+    return rows;
+  } catch (e) {
+    console.error('getUserLogin', e.message);
+    next(httpError('Database error', 500));
+  }
+};
 
 module.exports = {
   getAllUsers,
   getUser,
   addUser,
+  getUserLogin,
 };

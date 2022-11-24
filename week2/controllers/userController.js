@@ -1,8 +1,8 @@
 // userController
 'use strict';
-const {validationResult} = require('express-validator');
 const {getUser, getAllUsers, addUser} = require('../models/userModel');
 const {httpError} = require('../utils/errors');
+const {validationResult} = require('express-validator');
 
 const user_list_get = async (req, res, next) => {
   try {
@@ -32,43 +32,6 @@ const user_get = async (req, res, next) => {
   }
 };
 
-const user_post = async (req, res, next) => {
-  try {
-      // Extract the validation errors from a request.
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        // There are errors.
-        // Error messages can be returned in an array using `errors.array()`.
-        console.error('user_post validation', errors.array());
-        next(httpError('Invalid data', 400));
-        return;
-      }
-
-      // console.log('user_post', req.body);
-      const data = [
-          req.body.name,
-          req.body.email,
-          req.body.passwd,
-      ];
-
-      const result = await addUser(data, next);
-
-      if (result.affectedRows < 1) {
-          next(httpError('Invalid data', 400));
-          return;
-      }
-
-      res.json({
-          message: 'User added',
-          user_id: result.insertId,
-      });
-  } catch (e) {
-      console.error('user_post', e.message);
-      next(httpError('Internal server error', 500));
-  }
-};
-
 const user_put = async (req, res, next) => {
   try {
     const data = [
@@ -93,30 +56,38 @@ const user_put = async (req, res, next) => {
     console.error('user_put', e.message);
     next(httpError('Internal server error', 500));
   }
-  };
+};
   
-  const user_delete = async (req, res, next) => {
-    try {
-      const result = await deleteUser(req.params.id, next);
+const user_delete = async (req, res, next) => {
+  try {
+    const result = await deleteUser(req.params.id, next);
 
-      if (result.affectedRows < 1) {
-        next(httpError('No user deleted', 404));
-        return;
-      }
-
-      res.json({
-        message: 'User deleted',
-      });
-    } catch (e) {
-      console.error('user_delete', e.message);
-      next(httpError('Internal server error', 500));
+    if (result.affectedRows < 1) {
+      next(httpError('No user deleted', 404));
+      return;
     }
-  };
+
+    res.json({
+      message: 'User deleted',
+    });
+  } catch (e) {
+    console.error('user_delete', e.message);
+    next(httpError('Internal server error', 500));
+  }
+};
+
+const check_token = (req, res, next) => {
+  if (!req.user) {
+    next(httpError('Token not valid', 403));
+  } else {
+    res.json({ user: req.user });
+  }
+ };
 
 module.exports = {
     user_list_get,
     user_get,
-    user_post,
     user_put,
     user_delete,
+    check_token,
 };

@@ -3,6 +3,8 @@
 const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/catModel');
 const {httpError} = require('../utils/errors');
 const {validationResult} = require('express-validator');
+const sharp = require('sharp');
+const {getCoordinates} = require('../utils/imageMeta');
 
 const cat_list_get = async (req, res, next) => {
   try {
@@ -46,12 +48,21 @@ const cat_post = async (req, res, next) => {
     }
 
     // console.log('cat_post', req.body, 'cat_post', req.file);
+
+    const thumbnail = await sharp(req.file.path).
+      resize(160, 160).
+      png().
+      toFile('./thumbnails/'+req.file.filename);
+
+    const coords = await getCoordinates(req.file.path);
+
     const data = [
       req.body.name,
       req.body.birthdate,
       req.body.weight,
-      req.body.owner,
+      req.user.user_id,
       req.file.filename,
+      JSON.stringify(coords),
     ];
 
     const result = await addCat(data, next);
@@ -61,10 +72,12 @@ const cat_post = async (req, res, next) => {
       return;
     }
 
-    res.json({
-      message: 'Cat added',
-      cat_id: result.insertId,
-    });
+    if(thumbnail) {
+      res.json({
+        message: 'Cat added',
+        cat_id: result.insertId,
+      });
+    }
   } catch (e) {
     console.error('cat_post', e.message);
     next(httpError('Internal server error', 500));
@@ -84,16 +97,27 @@ const cat_put = async (req, res, next) => {
       return;
     }
 
-    //console.log('cat_put', req.body);
-    const data = [
-      req.body.name,
-      req.body.birthdate,
-      req.body.weight,
-      req.body.owner,
-      req.body.id,
-    ];
+    let data = [];
 
-    const result = await updateCat(data, next);
+    if (req.user.role === 0) {
+      data = [
+        req.body.name,
+        req.body.birthdate,
+        req.body.weight,
+        req.body.owner,
+        req.body.id,
+      ];
+    } else {
+      data = [
+        req.body.name,
+        req.body.birthdate,
+        req.body.weight,
+        req.body.id,
+        req.user.user_id,
+      ];
+    }
+
+    const result = await updateCat(data, req.user, next);
 
     if (result.affectedRows < 1) {
       next(httpError('No cat modified', 400));
@@ -110,7 +134,7 @@ const cat_put = async (req, res, next) => {
 const cat_delete = async (req, res, next) => {
   try {
     //console.log('cat_delete', req.params.id);
-    const cat = await deleteCat(req.params.id, next);
+    const cat = await deleteCat(req.params.id, req.user, next);
 
     if (cat.affectedRows < 1) {
       next(httpError('No cat deleted', 400));
