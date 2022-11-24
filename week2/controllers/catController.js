@@ -4,6 +4,7 @@ const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/ca
 const {httpError} = require('../utils/errors');
 const {validationResult} = require('express-validator');
 const sharp = require('sharp');
+const {getCoordinates} = require('../utils/imageMeta');
 
 const cat_list_get = async (req, res, next) => {
   try {
@@ -48,12 +49,12 @@ const cat_post = async (req, res, next) => {
 
     // console.log('cat_post', req.body, 'cat_post', req.file);
 
-    // TODO: create thumbnail
-
     const thumbnail = await sharp(req.file.path).
       resize(160, 160).
       png().
       toFile('./thumbnails/'+req.file.filename);
+
+    const coords = await getCoordinates(req.file.path);
 
     const data = [
       req.body.name,
@@ -61,6 +62,7 @@ const cat_post = async (req, res, next) => {
       req.body.weight,
       req.user.user_id,
       req.file.filename,
+      JSON.stringify(coords),
     ];
 
     const result = await addCat(data, next);

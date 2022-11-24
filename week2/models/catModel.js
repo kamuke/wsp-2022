@@ -18,7 +18,7 @@ const getAllCats = async (next) => {
 
 const getCat = async (catId, next) => {
   try {
-    const [rows] = await promisePool.execute(`SELECT cat_id, wsp_cat.name, weight, owner, filename, birthdate, wsp_user.name AS ownername
+    const [rows] = await promisePool.execute(`SELECT cat_id, wsp_cat.name, weight, owner, filename, birthdate, coords, wsp_user.name AS ownername
                                               FROM wsp_cat INNER JOIN wsp_user 
                                               ON wsp_cat.owner = wsp_user.user_id
                                               WHERE cat_id = ?;`, [catId]);
@@ -31,8 +31,8 @@ const getCat = async (catId, next) => {
 
 const addCat = async (data, next) => {
   try {
-    const [rows] = await promisePool.execute(`INSERT INTO wsp_cat (name, birthdate, weight, owner, filename) 
-                                              VALUES (?, ?, ?, ?, ?);`, data);
+    const [rows] = await promisePool.execute(`INSERT INTO wsp_cat (name, birthdate, weight, owner, filename, coords) 
+                                              VALUES (?, ?, ?, ?, ?, ?);`, data);
     return rows;
   } catch (e) {
     console.error('addCat', e.message);
