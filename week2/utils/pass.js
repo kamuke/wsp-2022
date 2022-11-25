@@ -28,8 +28,6 @@ passport.use(new Strategy(
       }
     }));
 
-// TODO: JWT strategy for handling bearer token
-// consider .env for secret, e.g. secretOrKey: process.env.JWT_SECRET
 passport.use(new JWTStrategy(
   {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
@@ -38,6 +36,5 @@ passport.use(new JWTStrategy(
     console.log('JWTStrategy: ', jwtPayload);
     done(null, jwtPayload);
   }));
-
 
 module.exports = passport;

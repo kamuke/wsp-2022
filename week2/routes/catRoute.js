@@ -1,9 +1,9 @@
 'use strict';
 const express = require('express');
 const {body} = require('express-validator');
+const {httpError} = require('../utils/errors');
 const multer = require('multer');
 const {cat_list_get, cat_get, cat_post, cat_put, cat_delete} = require('../controllers/catController');
-const { httpError } = require('../utils/errors');
 const router = express.Router();
 
 const fileFilter = (req, file, cb) => {
@@ -24,7 +24,7 @@ const testFile = (req, res, next) => {
     }
 };
 
-const upload = multer({ dest: './uploads/', fileFilter });
+const upload = multer({dest: './uploads/', fileFilter});
 
 router.route('/').
     get(cat_list_get).
