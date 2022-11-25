@@ -3,8 +3,8 @@
 const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/catModel');
 const {httpError} = require('../utils/errors');
 const {validationResult} = require('express-validator');
-const sharp = require('sharp');
 const {getCoordinates} = require('../utils/imageMeta');
+const sharp = require('sharp');
 
 const cat_list_get = async (req, res, next) => {
   try {
@@ -52,7 +52,7 @@ const cat_post = async (req, res, next) => {
     const thumbnail = await sharp(req.file.path).
       resize(160, 160).
       png().
-      toFile('./thumbnails/'+req.file.filename);
+      toFile('./thumbnails/' + req.file.filename);
 
     const coords = await getCoordinates(req.file.path);
 

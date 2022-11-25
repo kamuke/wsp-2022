@@ -12,7 +12,16 @@ module.exports = (app, port, httpsPort) => {
         cert: sslcert
     };
 
-    // TODO: app.use jne ilkan filestä
+    app.use ((req, res, next) => {
+        if (req.secure) {
+            // request was via https, so do no special handling
+            next();
+        } else {
+            const proxypath = process.env.PROXY_PASS || ''
+            // request was via http, so redirect to https
+            res.redirect(301, `https://${req.headers.host}${proxypath}${req.url}`);
+        }
+    });
 
     app.listen(port, () => console.log(`Example app listening on port ${port}!`));
     https.createServer(options, app).listen(8000);

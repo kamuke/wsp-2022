@@ -1,10 +1,10 @@
 'use strict';
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const {validationResult} = require('express-validator');
 const {httpError} = require('../utils/errors');
-const bcrypt = require('bcryptjs');
+const {validationResult} = require('express-validator');
 const {addUser} = require('../models/userModel');
+const bcrypt = require('bcryptjs');
 
 const login = (req, res, next) => {
   passport.authenticate('local', {session: false}, (err, user, info) => {

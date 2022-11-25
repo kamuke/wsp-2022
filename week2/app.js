@@ -12,14 +12,14 @@ const port = 3000;
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 if (process.env.NODE_ENV === 'production') {
-    require('./utils/production')(app, process.env.HTTP_PORT || 3000, process.env.HTTPS_PORT || 8000);
+  require('./utils/production')(app, process.env.HTTP_PORT || 3000, process.env.HTTPS_PORT || 8000);
 } else {
-    require('./utils/localhost')(app, process.env.PORT || 3000);
+  require('./utils/localhost')(app, process.env.HTTP_PORT || 3000);
 }
 
 app.use(cors());
 app.use(express.json()); // for parsing application/json
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
 
 app.use(passport.initialize());
 
