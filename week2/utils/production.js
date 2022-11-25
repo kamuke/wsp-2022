@@ -15,5 +15,4 @@ module.exports = (app, port, httpsPort) => {
     // TODO: app.use jne ilkan filestä
 
     app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-    https.createServer(options, app).listen(8000);
 };
