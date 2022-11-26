@@ -1,6 +1,6 @@
-// catController
 'use strict';
-const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/catModel');
+// catController
+const {getCat, getAllCats, addCat, updateCat, deleteCat} = require('../models/catModel');
 const {httpError} = require('../utils/errors');
 const {validationResult} = require('express-validator');
 const sharp = require('sharp');
@@ -8,12 +8,12 @@ const {getCoordinates} = require('../utils/imageMeta');
 
 const cat_list_get = async (req, res, next) => {
   try {
-    const cats = await getAllCats(next);
-    if (cats.length < 1) {
+    const kissat = await getAllCats(next);
+    if (kissat.length < 1) {
       next(httpError('No cats found', 404));
       return;
     }
-    res.json(cats);
+    res.json(kissat);
   } catch (e) {
     console.error('cat_list_get', e.message);
     next(httpError('Internal server error', 500));
@@ -42,17 +42,17 @@ const cat_post = async (req, res, next) => {
     if (!errors.isEmpty()) {
       // There are errors.
       // Error messages can be returned in an array using `errors.array()`.
-      console.error('cat_post validation', errors.array());
+      console.error('user_post validation', errors.array());
       next(httpError('Invalid data', 400));
       return;
     }
 
-    // console.log('cat_post', req.body, 'cat_post', req.file);
+    console.log('cat_post', req.body, req.file);
 
     const thumbnail = await sharp(req.file.path).
-      resize(160, 160).
-      png().
-      toFile('./thumbnails/' + req.file.filename);
+        resize(160, 160).
+        png().
+        toFile('./thumbnails/' + req.file.filename);
 
     const coords = await getCoordinates(req.file.path);
 
@@ -65,16 +65,15 @@ const cat_post = async (req, res, next) => {
       JSON.stringify(coords),
     ];
 
-    const result = await addCat(data, next);
 
+    const result = await addCat(data, next);
     if (result.affectedRows < 1) {
       next(httpError('Invalid data', 400));
       return;
     }
-
-    if(thumbnail) {
+    if (thumbnail) {
       res.json({
-        message: 'Cat added',
+        message: 'cat added',
         cat_id: result.insertId,
       });
     }
@@ -92,7 +91,7 @@ const cat_put = async (req, res, next) => {
     if (!errors.isEmpty()) {
       // There are errors.
       // Error messages can be returned in an array using `errors.array()`.
-      console.error('cat_put validation', errors.array());
+      console.error('user_post validation', errors.array());
       next(httpError('Invalid data', 400));
       return;
     }
@@ -117,14 +116,17 @@ const cat_put = async (req, res, next) => {
       ];
     }
 
-    const result = await updateCat(data, req.user, next);
+    console.log('cat_put', data);
 
+    const result = await updateCat(data, req.user, next);
     if (result.affectedRows < 1) {
       next(httpError('No cat modified', 400));
       return;
     }
 
-    res.json({message: 'Cat modified',});
+    res.json({
+      message: 'cat modified',
+    });
   } catch (e) {
     console.error('cat_put', e.message);
     next(httpError('Internal server error', 500));
@@ -133,17 +135,16 @@ const cat_put = async (req, res, next) => {
 
 const cat_delete = async (req, res, next) => {
   try {
-    //console.log('cat_delete', req.params.id);
-    const cat = await deleteCat(req.params.id, req.user, next);
-
-    if (cat.affectedRows < 1) {
+    const result = await deleteCat(req.params.id, req.user, next);
+    if (result.affectedRows < 1) {
       next(httpError('No cat deleted', 400));
       return;
     }
-
-    res.json({message: 'Cat deleted',});
+    res.json({
+      message: 'cat deleted',
+    });
   } catch (e) {
-    console.error('cat_delete', e.message);
+    console.error('delete', e.message);
     next(httpError('Internal server error', 500));
   }
 };

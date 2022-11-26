@@ -31,11 +31,11 @@ app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
 app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
 
 app.use((req, res, next) => {
-    const err = httpError('Not found', 404);
-    next(err);
+  const err = httpError('Not found', 404);
+  next(err);
 });
 
 app.use((err, req, res, next) => {
-    res.status(err.status || 500).
-        json({message: err.message || 'Internal server error'});
+  res.status(err.status || 500).
+      json({message: err.message || 'Internal server error'});
 });

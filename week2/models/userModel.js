@@ -5,8 +5,7 @@ const promisePool = pool.promise();
 
 const getAllUsers = async (next) => {
   try {
-    const [rows] = await promisePool.execute(`SELECT user_id, name, email, role 
-                                              FROM wsp_user`);
+    const [rows] = await promisePool.execute(`SELECT user_id, name, email, role FROM wsp_user;`);
     return rows;
   } catch (e) {
     console.error('getAllUsers', e.message);
@@ -14,23 +13,21 @@ const getAllUsers = async (next) => {
   }
 };
 
-const getUser = async (userID, next) => {
+const getUser = async (userId, next) => {
   try {
-    const [rows] = await promisePool.execute(`SELECT user_id, name, email, role
-                                              FROM wsp_user
-                                              WHERE user_id = ?;`, [userID]);
+    const [rows] = await promisePool.execute(`SELECT user_id, name, email, role FROM wsp_user
+                                              WHERE user_id = ?;`, [userId]);
     return rows;
   } catch (e) {
     console.error('getUser', e.message);
-    // next virheenhallinta ei taida toimia pass.js:n kanssa yhteen
-    // next(httpError('Database error', 500));
+   // next(httpError('Database error', 500));
   }
 };
 
 const addUser = async (data, next) => {
   try {
-    const [rows] = await promisePool.execute(`INSERT INTO wsp_user (name, email, password) 
-                                              VALUES (?, ?, ?);`, data);
+    const [rows] = await promisePool.execute(`INSERT INTO wsp_user (name, email, password) VALUES (?, ?, ?);`,
+        data);
     return rows;
   } catch (e) {
     console.error('addUser', e.message);
@@ -60,10 +57,12 @@ const deleteUser = async (userId, next) => {
   }
 };
 
-const getUserLogin = async (data, next) => {
+const getUserLogin = async (params, next) => {
   try {
-    // console.log(data);
-    const [rows] = await promisePool.execute('SELECT * FROM wsp_user WHERE email = ?;', data);
+    console.log(params);
+    const [rows] = await promisePool.execute(
+        'SELECT * FROM wsp_user WHERE email = ?;',
+        params);
     return rows;
   } catch (e) {
     console.error('getUserLogin', e.message);
