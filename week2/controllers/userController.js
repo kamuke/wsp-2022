@@ -3,6 +3,7 @@
 const {getUser, getAllUsers, deleteUser, updateUser} = require('../models/userModel');
 const {validationResult} = require('express-validator');
 const {httpError} = require('../utils/errors');
+const bcrypt = require('bcryptjs');
 
 const user_list_get = async (req, res, next) => {
   try {
@@ -35,12 +36,17 @@ const user_get = async (req, res, next) => {
 const user_put = async (req, res, next) => {
   try {
 
+    const salt = bcrypt.genSaltSync(10);
+    const pwd = bcrypt.hashSync(req.body.passwd, salt);
+
     const data = [
       req.body.name,
       req.body.email,
-      req.body.passwd,
-      req.body.id,
+      pwd,
+      req.user.user_id,
     ];
+
+    console.log('user_put:', req.body);
 
     const result = await updateUser(data, next);
     if (result.affectedRows < 1) {
@@ -76,7 +82,7 @@ const user_delete = async (req, res, next) => {
 
 const check_token = (req, res, next) => {
   if (!req.user) {
-    next(httpError('token not valid', 403));
+    next(httpError('Token not valid', 403));
   } else {
     res.json({ user: req.user });
   }
