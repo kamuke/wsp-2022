@@ -3,33 +3,24 @@ const express = require('express');
 const {body} = require('express-validator');
 const {httpError} = require('../utils/errors');
 const multer = require('multer');
-const {cat_list_get, cat_get, cat_post, cat_put, cat_delete} = require('../controllers/catController');
-const router = express.Router();
 
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || 
-        file.mimetype === 'image/png' || 
-        file.mimetype === 'image/gif') {
-        cb(null, true);
-    } else {
-        cb(httpError('File is not image', 400));
-    }
-};
+  if (file.mimetype.includes('image')) {
+    cb(null, true);
+  } else {
+    cb(httpError('Invalid file', 400));
+  }
+}
 
-const testFile = (req, res, next) => {
-    if (req.file) {
-        next();
-    } else {
-        res.status(400).json({errors: 'File is not image'});
-    }
-};
+const upload = multer({dest: 'uploads/', fileFilter});
+const {cat_list_get, cat_get, cat_post, cat_put, cat_delete} = require(
+    '../controllers/catController');
+const router = express.Router();
 
-const upload = multer({dest: './uploads/', fileFilter});
 
 router.route('/').
     get(cat_list_get).
     post(upload.single('cat'),
-        testFile,
         body('name').isLength({min: 1}).escape(),
         body('birthdate').isDate(),
         body('weight').isNumeric(),
