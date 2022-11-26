@@ -11,13 +11,13 @@ const login = (req, res, next) => {
     console.log('info: ', info);
     console.log('err1: ', err);
     if (err || !user) {
-      next(httpError('Kirjautumis erhe', 403));
+      next(httpError('Login failed', 403));
       return;
     }
     req.login(user, {session: false}, (err) => {
       if (err) {
         console.log('err2: ', err);
-        next(httpError('Kirjautmiserhe 2', 403));
+        next(httpError('Login failed 2', 403));
         return;
       }
       const token = jwt.sign(user, 'tw34y5ktugijl');

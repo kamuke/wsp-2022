@@ -54,7 +54,13 @@ const cat_post = async (req, res, next) => {
         png().
         toFile('./thumbnails/' + req.file.filename);
 
-    const coords = await getCoordinates(req.file.path);
+    let coords = await getCoordinates(req.file.path);
+
+    if (coords !== null) {
+      coords = JSON.stringify(coords);
+    } else {
+      coords = '[24.74,60.24]';
+    }
 
     const data = [
       req.body.name,
@@ -62,7 +68,7 @@ const cat_post = async (req, res, next) => {
       req.body.weight,
       req.user.user_id,
       req.file.filename,
-      JSON.stringify(coords),
+      coords,
     ];
 
 
