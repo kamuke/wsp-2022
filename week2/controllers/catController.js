@@ -98,20 +98,22 @@ const cat_put = async (req, res, next) => {
 
     let data = [];
 
+    console.log('cat_put:', req.body);
+
     if (req.user.role === 0) {
       data = [
         req.body.name,
         req.body.birthdate,
         req.body.weight,
         req.body.owner,
-        req.body.id,
+        req.params.id,
       ];
     } else {
       data = [
         req.body.name,
         req.body.birthdate,
         req.body.weight,
-        req.body.id,
+        req.params.id,
         req.user.user_id,
       ];
     }
