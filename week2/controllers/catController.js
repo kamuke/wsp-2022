@@ -3,8 +3,8 @@
 const {getAllCats, getCat, addCat, updateCat, deleteCat} = require('../models/catModel');
 const {httpError} = require('../utils/errors');
 const {validationResult} = require('express-validator');
-const {getCoordinates} = require('../utils/imageMeta');
 const sharp = require('sharp');
+const {getCoordinates} = require('../utils/imageMeta');
 
 const cat_list_get = async (req, res, next) => {
   try {
