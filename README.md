@@ -1,1 +1,1 @@
-# School assignments for Web-development basics course in Metropolia UAS, autumn 2022.
+# School assignments for Basics of Web development course in Metropolia UAS, autumn 2022.
